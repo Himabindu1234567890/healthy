@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="no-bg-page">
+
+<div class="dashboard-container">
+
+  <h1 class="dash-title">NutriSense Dashboard</h1>
+  <p class="dash-subtitle">Interactive Nutrition & Health Analytics</p>
+
+  <div class="dashboard-grid">
+
+    <!-- BMI GAUGE -->
+    <div class="dash-card">
+      <h3>⚖ BMI Status</h3>
+      <canvas id="bmiGauge"></canvas>
+      <p class="metric">{{ bmi }} ({{ bmi_status }})</p>
+    </div>
+    <!-- NUTRITION RISK GAUGE -->
+<div class="dash-card animate-card">
+  <h3>🚦 Nutrition Risk</h3>
+  <canvas id="riskGauge"></canvas>
+  <p class="metric">{{ risk }}</p>
+</div>
+
+    <!-- WATER GAUGE -->
+    <div class="dash-card">
+      <h3>💧 Water Intake</h3>
+      <canvas id="waterGauge"></canvas>
+      <p class="metric">{{ water }} / 8 glasses</p>
+    </div>
+    
+    <!-- BALANCED DIET SCORE -->
+    <div class="dash-card">
+      <h3>🎯 Diet Score</h3>
+      <canvas id="dietScoreGauge"></canvas>
+      <p class="metric" id="dietScoreText">%</p>
+    </div>
+
+    <!-- NUTRIENT BAR -->
+    <div class="dash-card wide">
+         
+      <h3>🥗 Nutrient Breakdown</h3>
+      <canvas id="nutrientChart"></canvas>
+    </div>
+    <div class="dash-card wide">
+    <h3>🎛 What-If Risk Playground</h3>
+    <p class="muted">
+      Adjust nutrient values and see how your nutrition risk changes.
+    </p>
+
+    <label>
+      Sugar Reduction (grams):
+      <b id="sugarValue">0</b> g
+    </label>
+
+    <input type="range" id="sugarSlider" min="0" max="50" value="0"
+       oninput="updateSugar(this.value)"> 
+  
+    <div class="whatif-result">
+      Predicted Risk:
+      <span id="whatIfRisk" class="badge">{{ risk }}</span>
+    </div>
+  </div>
+
+
+    <!-- WEEKLY TREND -->
+    <div class="dash-card wide">
+      <h3>📈 Weekly Nutrition Trend</h3>
+      <canvas id="weeklyTrend"></canvas>
+    </div>
+
+    <!-- TOP RISK CONTRIBUTOR -->
+    <div class="dash-card">
+      <h3>⚠ Top Risk Contributor</h3>
+      <canvas id="riskFactorChart"></canvas>
+    </div>
+
+    <!-- PORTION AWARENESS -->
+    <div class="dash-card">
+      <h3>🍽 Portion Awareness</h3>
+      <canvas id="portionChart"></canvas>
+    </div>
+
+    <!-- CTA -->
+    <div class="dash-card action">
+      <h3>🍽 Personalized Diet Plan</h3>
+      <a href="/diet-plan" class="dash-btn">View Diet Plan</a>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const nutrients = JSON.parse('{{ nutrients | tojson | safe }}');
+    console.log("NUTRIENTS:", nutrients);
+</script>
+
+<script>
+/* ================= SAFE DATA ================= */
+
+console.log("NUTRIENTS:", nutrients);  
+const waterVal = Number("{{ water | default(0) }}") || 0;
+const bmiVal = Number("{{ bmi | default(22) }}") || 22;
+const riskVal = "{{ risk | default('Healthy') }}";
+console.log("RISK FROM BACKEND:", riskVal); 
+/* ================= HELPER ================= */
+function gauge(ctx, value, max, color) {
+  return new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      datasets: [{
+        data: [value, max - value],
+        backgroundColor: [color, "#e5e7eb"],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      cutout: "75%",
+      plugins: { legend: { display: false }, tooltip: { enabled: false } }
+    }
+  });
+}
+
+/* ================= BMI GAUGE ================= */
+gauge(
+  document.getElementById("bmiGauge"),
+  Math.min(bmiVal, 40),
+  40,
+  bmiVal < 25 ? "#22c55e" : "#ef4444"
+);
+
+/* ================= RISK GAUGE ================= */
+const riskScore = riskVal === "Healthy" ? 30 : riskVal === "Moderate" ? 60 : 90;
+gauge(
+  document.getElementById("riskGauge"),
+  riskScore,
+  100,
+  riskVal === "Healthy" ? "#22c55e" : riskVal === "Moderate" ? "#f59e0b" : "#ef4444"
+);
+
+/* ================= WATER ================= */
+gauge(
+  document.getElementById("waterGauge"),
+  Math.min(waterVal, 8),
+  8,
+  "#3b82f6"
+);
+
+/* ================= DIET SCORE ================= */
+const dietScore =
+  100 -
+  ((nutrients.sugar || 0) > 30 ? 20 : 0) -
+  ((nutrients.fat || 0) > 25 ? 20 : 0);
+
+document.getElementById("dietScoreText").innerText = dietScore + "%";
+
+gauge(
+  document.getElementById("dietScoreGauge"),
+  dietScore,
+  100,
+  "#16a34a"
+);
+
+/* ================= NUTRIENT BAR ================= */
+new Chart(document.getElementById("nutrientChart"), {
+  type: "bar",
+  data: {
+    labels: ["Calories", "Protein", "Carbohydrates", "Fat", "Sugar"],
+    datasets: [{
+      data: [
+        nutrients.calories || 0,
+        nutrients.protein || 0,
+        nutrients.carbohydrates || 0,
+        nutrients.fat || 0,
+        nutrients.sugar || 0
+      ],
+      backgroundColor: ["#60a5fa", "#34d399", "#fbbf24", "#f87171", "#a78bfa"]
+    }]
+  },
+  options: { responsive: true, plugins: { legend: { display: false } } }
+});
+
+/* ================= WEEKLY TREND ================= */
+new Chart(document.getElementById("weeklyTrend"), {
+  type: "line",
+  data: {
+    labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+    datasets: [{
+      data: [60,65,70,68,75,78,82],
+      borderColor: "#3b82f6",
+      tension: 0.4,
+      fill: false
+    }]
+  },
+  options: { plugins: { legend: { display: false } } }
+});
+
+/* ================= TOP RISK ================= */
+new Chart(document.getElementById("riskFactorChart"), {
+  type: "bar",
+  data: {
+    labels: ["Sugar", "Fat", "Calories"],
+    datasets: [{
+      data: [
+        nutrients.sugar || 0,
+        nutrients.fat || 0,
+        nutrients.calories || 0
+      ],
+      backgroundColor: "#ef4444"
+    }]
+  },
+  options: {
+    indexAxis: "y",
+    plugins: { legend: { display: false } }
+  }
+});
+
+/* ================= PORTION AWARENESS ================= */
+new Chart(document.getElementById("portionChart"), {
+  type: "doughnut",
+  data: {
+    labels: ["Normal", "Excess"],
+    datasets: [{
+      data: [70, 30],
+      backgroundColor: ["#22c55e", "#ef4444"]
+    }]
+  },
+  options: { plugins: { legend: { display: false } } }
+});
+
+</script>
+<script>
+  const sugarSlider = document.getElementById("sugarSlider");
+  const sugarValue = document.getElementById("sugarValue");
+  const riskLabel = document.getElementById("whatIfRisk");
+
+  if (sugarSlider) {
+    const originalSugar = nutrients.sugar || 0;
+    const originalRisk = "{{ risk }}";
+
+    sugarSlider.addEventListener("input", () => {
+      const reduction = parseInt(sugarSlider.value);
+      sugarValue.innerText = reduction;
+
+      // ✅ Clamp sugar (never below 0)
+      let newSugar = originalSugar - reduction;
+      if (newSugar < 0) newSugar = 0;
+
+      /*
+        REALISTIC THRESHOLDS
+        --------------------
+        > 30g  → Unhealthy
+        15–30g → Moderate
+        < 15g  → Healthy
+      */
+
+      if (newSugar < 15) {
+        riskLabel.innerText = "Healthy";
+        riskLabel.className = "badge healthy";
+      } 
+      else if (newSugar <= 30) {
+        riskLabel.innerText = "Moderate";
+        riskLabel.className = "badge moderate";
+      } 
+      else {
+        riskLabel.innerText = "Unhealthy";
+        riskLabel.className = "badge unhealthy";
+      }
+    });
+  }
+</script>
+
+
+
+
+{% endblock %}

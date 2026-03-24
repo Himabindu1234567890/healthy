@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Dataset
+data/*.csv
+
+# Model files
+model/*.pkl
+
+# Notebook
+notebook/*.ipynb

@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="no-bg-page">
+<div class="diet-container">
+
+  <!-- PAGE TITLE -->
+  <div class="diet-header-center">
+    <h1 class="diet-title">Daily Diet Plan</h1>
+    <p class="diet-subtitle">Disease-based personalized daily schedule</p>
+  </div>
+
+  <!-- DISEASE SELECTION -->
+  <div class="disease-card">
+    <h2>Select Health Condition</h2>
+    <p>
+      Choose your health condition to generate a personalized
+      daily diet and lifestyle plan.
+    </p>
+
+    <form method="POST" class="disease-form">
+      <input type="number" name="age" placeholder="Enter Age" min="1" required>
+
+      <select name="disease" required>
+        <option value="">Select Disease</option>
+        <option value="None">None (Normal Diet)</option>
+        <option>Diabetes</option>
+        <option>Hypertension</option>
+        <option>Obesity</option>
+      </select>
+    <h3>Lifestyle Habits (Optional)</h3>
+
+<label>
+  <input type="checkbox" name="smoker" value="yes">
+  🚬 Smoker
+</label>
+
+<label>
+  <input type="checkbox" name="drinker" value="yes">
+  🍺 Alcohol Consumer
+</label>
+
+
+      <button type="submit">Generate Diet Plan</button>
+    </form>
+  </div>
+  
+  {% if plan %}
+
+  <!-- =========================
+       SECTION 1: CIRCULAR TIMETABLE
+  ========================== -->
+  <h2 class="section-heading">Daily Timetable</h2>
+  <h2 class="section-heading center">Daily Eating Schedule</h2>
+
+  <div class="circle-schedule">
+
+    <!-- CENTER QUOTE -->
+    <div class="schedule-center">
+      <p>
+        Eat on time,<br>
+        stay healthy.
+      </p>
+    </div>
+
+    <!-- ITEMS -->
+    <div class="schedule-item item1" data-time="06:00">
+      <img src="{{ url_for('static', filename='images/wakeup.jpeg') }}">
+      <span>Wake Up</span>
+      <small>6:00 AM</small>
+    </div>
+
+    <div class="schedule-item item2" data-time="06:30">
+      <img src="{{ url_for('static', filename='images/exercise.jpeg') }}">
+      <span>Exercise</span>
+      <small>6:30 AM</small>
+    </div>
+
+    <div class="schedule-item item3" data-time="07:00">
+      <img src="{{ url_for('static', filename='images/water.jpeg') }}">
+      <span>Water</span>
+      <small>7:00 AM</small>
+    </div>
+
+    <div class="schedule-item item4" data-time="08:00">
+      <img src="{{ url_for('static', filename='images/breakfast.jpeg') }}">
+      <span>Breakfast</span>
+      <small>8:00 AM</small>
+    </div>
+
+    <div class="schedule-item item5" data-time="13:00">
+      <img src="{{ url_for('static', filename='images/lunch.jpeg') }}">
+      <span>Lunch</span>
+      <small>1:00 PM</small>
+    </div>
+
+    <div class="schedule-item item6" data-time="17:00">
+      <img src="{{ url_for('static', filename='images/snack.jpeg') }}">
+      <span>Snack</span>
+      <small>5:00 PM</small>
+    </div>
+
+    <div class="schedule-item item7" data-time="20:00">
+      <img src="{{ url_for('static', filename='images/dinner.jpeg') }}">
+      <span>Dinner</span>
+      <small>8:00 PM</small>
+    </div>
+
+    <div class="schedule-item item8" data-time="22:00">
+      <img src="{{ url_for('static', filename='images/sleep.jpeg') }}">
+      <span>Sleep</span>
+      <small>10:30 PM</small>
+    </div>
+
+  </div>
+
+  <!-- =========================
+       SECTION 2: MEAL-WISE PLAN
+  ========================== -->
+  <div class="meal-cards">
+
+    <div class="meal-card clickable" onclick="openMeal('breakfast')">
+      <h3>🍳 Breakfast (8:00 AM)</h3>
+      <ul>
+        {% for food in plan.Breakfast.diet %}
+        <li>{{ food }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="meal-card clickable" onclick="openMeal('lunch')">
+      <h3>🍛 Lunch (1:00 PM)</h3>
+      <ul>
+        {% for food in plan.Lunch.diet %}
+        <li>{{ food }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="meal-card clickable" onclick="openMeal('snack')">
+      <h3>☕ Snack (5:00 PM)</h3>
+      <ul>
+        {% for food in plan['Evening Snack'].diet %}
+        <li>{{ food }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="meal-card clickable" onclick="openMeal('dinner')">
+      <h3>🌙 Dinner (8:00 PM)</h3>
+      <ul>
+        {% for food in plan.Dinner.diet %}
+        <li>{{ food }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- =========================
+       SECTION 3: LIFESTYLE & AVOID
+  ========================== -->
+  <div class="lifestyle-avoid">
+
+    <div class="lifestyle-box">
+      <h3>Healthy Lifestyle</h3>
+      <p><b>💧 Water:</b> {{ plan.Lifestyle.Water }}</p>
+      <p><b>😴 Sleep:</b> {{ plan.Lifestyle.Sleep }}</p>
+    </div>
+
+    <div class="avoid-box">
+      <h3>Foods to Avoid</h3>
+      <ul>
+        {% for food in plan.Avoid %}
+        <li>{{ food }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+  </div>
+
+  {% endif %}
+
+</div>
+</div>
+
+<script>
+function openMeal(mealType) {
+  const disease = "{{ disease }}";
+  window.location.href = `/meal-plan/${mealType}?disease=${disease}`;
+}
+</script>
+<script>
+  const items = document.querySelectorAll(".schedule-item");
+
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  items.forEach(item => {
+    const time = item.dataset.time; // "08:00"
+    const [h, m] = time.split(":").map(Number);
+    const itemMinutes = h * 60 + m;
+
+    if (currentMinutes > itemMinutes + 30) {
+      // Completed (30 min buffer)
+      item.classList.add("completed");
+    } 
+    else if (
+      currentMinutes >= itemMinutes - 15 &&
+      currentMinutes <= itemMinutes + 30
+    ) {
+      // Current active
+      item.classList.add("active");
+    }
+  });
+</script>
+
+
+{% endblock %}

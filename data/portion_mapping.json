@@ -1,0 +1,80 @@
+{
+  "Rice": {
+    "bowl": 150,
+    "cup": 200,
+    "grams": 100,
+    "kg": 1000
+  },
+
+  "Dal": {
+    "bowl": 150,
+    "cup": 200,
+    "grams": 100
+  },
+
+  "Milk": {
+    "glass_small": 200,
+    "glass_medium": 250,
+    "glass_large": 300
+  },
+
+  "Curd": {
+    "bowl": 150,
+    "grams": 100
+  },
+
+  "Chapati": {
+    "piece": 40
+  },
+
+  "Idli": {
+    "piece": 60
+  },
+
+  "Dosa": {
+    "piece": 120
+  },
+
+  "Vada": {
+    "piece": 70
+  },
+
+  "Banana": {
+    "piece": 100
+  },
+
+  "Apple": {
+    "piece": 100
+  },
+
+  "Orange": {
+    "piece": 130
+  },
+
+  "Egg": {
+    "piece": 50
+  },
+
+  "Chicken": {
+    "grams": 100,
+    "kg": 1000
+  },
+
+  "Fish": {
+    "grams": 100,
+    "kg": 1000
+  },
+
+  "Oil": {
+    "spoon": 10
+  },
+
+  "Sugar": {
+    "spoon": 5
+  },
+
+  "Vegetables": {
+    "bowl": 150,
+    "grams": 100
+  }
+}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="no-bg-page">
+  <div class="profile-page">
+
+    <!-- PROFILE HEADER -->
+    <div class="profile-header">
+      <div class="avatar-box">
+        <img
+          src="{% if profile.image %}
+               {{ url_for('static', filename='profile_images/' + profile.image) }}
+               {% else %}
+               {{ url_for('static', filename='profile_images/default.png') }}
+               {% endif %}"
+          class="profile-avatar"
+        >
+
+        <label class="avatar-edit">
+          Change Photo
+          <input type="file" name="profile_image" form="profileForm" hidden>
+        </label>
+      </div>
+
+      <div class="profile-info">
+        <h2>{{ profile.name | default("Your Name") }}</h2>
+        <p>{{ profile.disease | default("No health condition selected") }}</p>
+      </div>
+    </div>
+
+    <!-- PROFILE FORM CARD -->
+    <form id="profileForm"
+          method="POST"
+          enctype="multipart/form-data"
+          class="profile-card">
+
+      <!-- SECTION: PERSONAL INFO -->
+      <h3 class="section-title">Personal Information</h3>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" name="name"
+                 value="{{ profile.name | default('') }}" required>
+        </div>
+
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" name="age"
+                 value="{{ profile.age | default('') }}">
+        </div>
+
+        <div class="form-group">
+          <label>Gender</label>
+          <select name="gender">
+            <option value="">Select</option>
+            <option {% if profile.gender == 'Female' %}selected{% endif %}>Female</option>
+            <option {% if profile.gender == 'Male' %}selected{% endif %}>Male</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- SECTION: HEALTH INFO -->
+      <h3 class="section-title">Health Information</h3>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Height (cm)</label>
+          <input type="number" name="height"
+                 value="{{ profile.height | default('') }}">
+        </div>
+
+        <div class="form-group">
+          <label>Weight (kg)</label>
+          <input type="number" name="weight"
+                 value="{{ profile.weight | default('') }}">
+        </div>
+
+        <div class="form-group">
+          <label>Health Condition</label>
+          <select name="disease">
+            <option value="">None</option>
+            <option {% if profile.disease == 'Diabetes' %}selected{% endif %}>Diabetes</option>
+            <option {% if profile.disease == 'Hypertension' %}selected{% endif %}>Hypertension</option>
+            <option {% if profile.disease == 'Obesity' %}selected{% endif %}>Obesity</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ACTION -->
+      <div class="form-action">
+        <button type="submit" class="profile-btn">Save Changes</button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

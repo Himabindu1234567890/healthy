@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NutriSense</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body id="bg">
+
+<!-- TOP NAVBAR -->
+<div class="navbar">
+    <h2 class="logo">NutriSense</h2>
+    <div class="nav-links">
+        <a href="/home">Home</a>
+        <a href="/">Nutrition Risk</a>
+        <a href="/diet-plan">Diet Plan</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/about">About</a>
+        <a href="/profile">Profile</a>
+        <a href="/auth" class="login-btn">Login / Sign Up</a>
+    </div>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+<script>
+  if ("Notification" in window) {
+    if (Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }
+</script>
+...
+<!-- existing scripts -->
+
+<!-- 🔔 NutriSense Smart Reminders -->
+<script>
+const reminders = [
+  { time: "07:00", title: "🌅 Good Morning", message: "Start your day with warm water for better digestion." },
+  { time: "08:00", title: "🍳 Breakfast Time", message: "A healthy breakfast keeps your energy stable." },
+  { time: "10:30", title: "💧 Hydration Check", message: "Drink water now to stay refreshed." },
+  { time: "13:00", title: "🍛 Lunch Reminder", message: "Balanced lunch improves metabolism." },
+  { time: "17:00", title: "☕ Snack Time", message: "Healthy snacks prevent overeating." },
+  { time: "18:30", title: "🏃 Activity Alert", message: "A short walk boosts digestion and heart health." },
+  { time: "20:00", title: "🌙 Dinner Time", message: "Light dinner helps better sleep." },
+  { time: "22:30", title: "😴 Sleep Reminder", message: "Good sleep supports overall health." }
+];
+
+function showNotification(title, message) {
+  if ("Notification" in window && Notification.permission === "granted") {
+    new Notification(title, { body: message });
+  }
+}
+
+setInterval(() => {
+  const now = new Date();
+  const current =
+    now.getHours().toString().padStart(2, "0") + ":" +
+    now.getMinutes().toString().padStart(2, "0");
+
+  reminders.forEach(r => {
+    if (r.time === current && !sessionStorage.getItem(r.time)) {
+      showNotification(r.title, r.message);
+      sessionStorage.setItem(r.time, "sent");
+    }
+  });
+}, 60000);
+</script>
+<footer class="footer">
+  <div class="footer-container">
+
+    <!-- LEFT -->
+    <div class="footer-section">
+      <h3>NutriSense</h3>
+      <p>
+        AI-powered nutrition risk analysis and personalized
+        diet planning platform for healthier living.
+      </p>
+    </div>
+
+    <!-- MIDDLE -->
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/diet-plan">Diet Plan</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/profile">Profile</a></li>
+      </ul>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="footer-section">
+      <h4>Contact</h4>
+      <p>Email: nutrisense.project@gmail.com</p>
+      <p>Location: India</p>
+      <p>Academic Project (Final Year)</p>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 NutriSense | Developed for Academic Purpose
+  </div>
+</footer>
+
+
+</body>
+</html>
+
+</body>
+</html>

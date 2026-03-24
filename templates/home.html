@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- HERO SECTION (WITH BACKGROUND IMAGE) -->
+<section class="hero-section">
+
+  <!-- Background Video -->
+  <video class="hero-video" autoplay muted loop playsinline>
+    <source src="{{ url_for('static', filename='videos/home.mp4') }}" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Optional dark overlay (recommended for premium look) -->
+  <div class="hero-overlay"></div>
+
+</section>
+
+
+<!-- ABOUT NUTRISENSE (REFERENCE STYLE) -->
+<section class="about-ref-section">
+  <div class="about-ref-container">
+
+    <!-- LEFT IMAGE -->
+    <div class="about-ref-image">
+      <img src="{{ url_for('static', filename='images/about.png') }}" alt="NutriSense Platform">
+    </div>
+
+    <!-- RIGHT CONTENT -->
+    <div class="about-ref-content">
+      <span class="about-ref-tag">ABOUT OUR PLATFORM</span>
+
+      <h2>AI-Powered Healthy Eating & Nutrition Risk Analysis</h2>
+
+      <p>
+        NutriSense helps individuals understand their daily food intake,
+        identify nutrition risks, and make healthier lifestyle decisions.
+      </p>
+
+      <p>
+        Using <strong>data analytics and machine learning</strong>, our platform
+        evaluates dietary patterns, predicts health risks, and generates
+        personalized diet insights based on real-world nutrition data.
+      </p>
+
+      <ul class="about-ref-list">
+        <li>Nutrition Risk Prediction using AI models</li>
+        <li>Dietary Pattern Analysis from food intake data</li>
+        <li>Personalized Diet Guidance based on health condition</li>
+        <li>Real-time Nutrition Insights via interactive dashboards</li>
+      </ul>
+
+      <div class="about-ref-highlight">
+        NutriSense bridges the gap between raw nutrition data and actionable
+        health insights.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+
+<!-- HOW IT WORKS SECTION (NO BACKGROUND IMAGE) -->
+<section class="how-section">
+    <h2>How NutriSense Works</h2>
+
+    <div class="how-cards">
+
+        <div class="how-card">
+            <h3>🥗 Select Food & Disease</h3>
+            <p>Choose food items and health condition</p>
+        </div>
+
+        <div class="how-card">
+            <h3>🧠 Nutrition Analysis</h3>
+            <p>ML model analyzes nutrition data</p>
+        </div>
+
+        <div class="how-card">
+            <h3>📊 View Results</h3>
+            <p>See nutrition risk and BMI</p>
+        </div>
+
+        <div class="how-card">
+            <h3>🥗 Diet Plan</h3>
+            <p>Get disease-based daily diet plan</p>
+        </div>
+
+    </div>
+</section>
+<!-- WATER INTAKE CALCULATOR -->
+<section class="water-section">
+
+<h2>💧 Daily Water Intake Calculator</h2>
+
+<p>Enter your weight to know how much water you should drink daily.</p>
+
+<div class="water-box">
+
+<input type="number" id="weight" placeholder="Enter your weight (kg)">
+
+<button onclick="calculateWater()">Calculate</button>
+
+<p id="waterResult"></p>
+
+</div>
+
+</section>
+<section class="contact-section" id="contact">
+    <div class="contact-container">
+
+        <!-- LEFT SIDE: INFO + CALL -->
+        <div class="contact-info">
+            <h2>Contact Us</h2>
+            <p>
+              Have questions about nutrition analysis, diet plans, or health insights?
+              Reach out to NutriSense anytime.
+            </p>
+
+            <div class="contact-details">
+                <p><strong>Email:</strong> nutrisense.support@gmail.com</p>
+
+                <p>
+                    <strong>Call:</strong>
+                    <a href="tel:+919876543210" class="call-link">
+                        📞 +91 98765 43210
+                    </a>
+                </p>
+
+                <!-- ✅ ADDED TIMINGS -->
+                <p><strong>Timings:</strong> Mon – Sat | 9:00 AM – 6:00 PM</p>
+
+                <p><strong>Location:</strong> India</p>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE: FORM -->
+        <div class="contact-form">
+            <form>
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <textarea placeholder="Your Message" rows="5" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+
+    </div>
+</section>
+
+<!-- CHATBOT BUTTON -->
+<div class="chatbot-icon" onclick="toggleChat()">
+    💬
+</div>
+
+<!-- CHATBOT BOX -->
+<div class="chatbot-box" id="chatbotBox">
+
+    <div class="chatbot-header">
+        NutriSense Assistant
+        <span onclick="toggleChat()">✖</span>
+    </div>
+
+    <div id="chatMessages" class="chat-messages"></div>
+
+    <!-- SUGGESTED QUESTIONS -->
+    <div class="chat-suggestions">
+
+        <button onclick="askSuggestion('banana calories')">🍌 Banana Calories</button>
+
+        <button onclick="askSuggestion('apple calories')">🍎 Apple Calories</button>
+
+        <button onclick="askSuggestion('is egg healthy')">🥚 Egg Healthy?</button>
+
+        <button onclick="askSuggestion('is rice good for diabetes')">🍚 Rice & Diabetes</button>
+
+    </div>
+
+    <div class="chat-input">
+        <input type="text" id="userMessage" placeholder="Ask about food, calories, diabetes...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+
+<script>
+
+function calculateWater(){
+
+let weight = document.getElementById("weight").value;
+
+if(weight === ""){
+document.getElementById("waterResult").innerHTML = "Please enter your weight.";
+return;
+}
+
+let water = (weight * 0.033).toFixed(2);
+
+document.getElementById("waterResult").innerHTML =
+"You should drink approximately " + water + " liters of water daily.";
+
+}
+
+</script>
+
+{% endblock %}

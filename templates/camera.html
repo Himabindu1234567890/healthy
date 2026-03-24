@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Food Detection</title>
+</head>
+<body>
+
+<h2>Live Food Capture</h2>
+
+<video id="video" width="400" autoplay></video>
+<canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
+
+<br><br>
+
+<label>How many items?</label>
+<input type="number" id="itemCount" min="1" value="1">
+<button onclick="generateInputs()">Set</button>
+
+<div id="inputs"></div>
+
+<br>
+<button onclick="capture()">Capture</button>
+<pre id="output"></pre>
+
+<button onclick="useResult()" style="margin-top:15px;">
+  ✅ Use This Result
+</button>
+
+
+<script>
+const video = document.getElementById("video");
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => video.srcObject = stream);
+
+function generateInputs() {
+    const count = parseInt(document.getElementById("itemCount").value);
+    const div = document.getElementById("inputs");
+    div.innerHTML = "";
+
+    for (let i = 0; i < count; i++) {
+        div.innerHTML += `
+        <h4>Item ${i+1}</h4>
+        Name: <input id="name${i}" required><br>
+
+        Measure:
+        <select id="measure${i}" required>
+            <option value="">Select</option>
+            <option value="piece">Piece</option>
+            <option value="cup">Cup</option>
+            <option value="bowl">Bowl</option>
+            <option value="spoon">Spoon</option>
+            <option value="plate">Plate</option>
+            <option value="glass">Glass</option>
+        </select><br>
+
+        Size:
+        <select id="size${i}">
+            <option value="small">Small</option>
+            <option value="medium" selected>Medium</option>
+            <option value="large">Large</option>
+        </select><br>
+
+        Count: <input type="number" id="count${i}" value="1" min="1"><br><br>
+        `;
+    }
+}
+
+function capture() {
+    const canvas = document.getElementById("canvas");
+    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const image = canvas.toDataURL("image/jpeg");
+    const itemCount = parseInt(document.getElementById("itemCount").value);
+    const items = [];
+
+    for (let i = 0; i < itemCount; i++) {
+        items.push({
+            name: document.getElementById(`name${i}`).value,
+            measure: document.getElementById(`measure${i}`).value || "piece",
+            size: document.getElementById(`size${i}`).value || "medium",
+            count: document.getElementById(`count${i}`).value || 1
+        });
+    }
+
+   fetch("/capture", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ image, items })
+})
+.then(res => {
+    console.log("Status:", res.status);
+    return res.json();
+})
+.then(data => {
+    console.log("Response:", data);   // 🔴 CHECK THIS
+    document.getElementById("output").textContent =
+        JSON.stringify(data, null, 2);
+})
+.catch(err => {
+    console.error("Fetch error:", err);
+});
+
+}
+</script>
+<script>
+function useResult() {
+    const output = document.getElementById("output").textContent;
+    if (!output) {
+        alert("No data to use");
+        return;
+    }
+
+    const data = JSON.parse(output);
+
+    // Save camera data in browser
+    sessionStorage.setItem("camera_food", JSON.stringify(data.items));
+
+    // Go back to nutrition prediction page
+    window.location.href = "/";
+}
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+/* ===============================
+   DASHBOARD UI
+================================ */
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 60px 30px;
+}
+
+.dash-title {
+    text-align: center;
+    font-size: 32px;
+}
+
+.dash-subtitle {
+    text-align: center;
+    color: #6b7280;
+    margin-bottom: 40px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+}
+
+.dash-card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+.dash-card:hover {
+    transform: translateY(-6px);
+}
+
+.dash-card.wide {
+    grid-column: span 2;
+}
+
+.bmi-value {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    color: white;
+    font-size: 14px;
+}
+
+.Normal { background: #2ecc71; }
+.Overweight { background: #f59e0b; }
+.Obese { background: #ef4444; }
+
+.risk-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin: 15px auto;
+    font-weight: bold;
+}
+
+.Healthy { background: #22c55e; }
+.Moderate { background: #f59e0b; }
+.Unhealthy { background: #ef4444; }
+
+.dash-card.action {
+    background: #ecfdf5;
+    text-align: center;
+}
+
+.dash-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 26px;
+    background: #2ecc71;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .dash-card.wide {
+        grid-column: span 1;
+    }
+}
+

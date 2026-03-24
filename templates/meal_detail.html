@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="no-bg-page">
+  <div class="meal-container">
+
+  <!-- TITLE -->
+  <h1 class="meal-title text-center">{{ meal }} Plan</h1>
+
+  <!-- RECOMMENDED FOR -->
+  <p class="meal-subtitle text-center">
+    Recommended for: <strong>{{ disease }}</strong>
+  </p>
+
+  <!-- MEAL TIME -->
+  <div class="time-card text-center">
+    ⏰ Meal Time: <strong>{{ details.time }}</strong>
+  </div>
+
+  <!-- FOODS TO EAT -->
+  <h3 class="section-title eat text-center">✅ Foods to Eat</h3>
+  <div class="food-grid">
+    {% for food in details.foods %}
+      {% set img = 'images/' ~ food|lower|replace(' ', '_') ~ '.jpeg' %}
+      <div class="food-card">
+        <img src="{{ url_for('static', filename=img) }}"
+             alt="{{ food }}">
+        <p>{{ food }}</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- FOODS TO AVOID -->
+  <h3 class="section-title avoid text-center">🚫 Foods to Avoid</h3>
+  <div class="food-grid">
+    {% for food in details.avoid %}
+      {% set img = 'images/' ~ food|lower|replace(' ', '_') ~ '.jpeg' %}
+      <div class="food-card avoid">
+        <img src="{{ url_for('static', filename=img) }}"
+             alt="{{ food }}">
+        <p>{{ food }}</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- WHY -->
+  <div class="reason-box text-center">
+    💡 <strong>Why this meal?</strong><br>
+    {{ details.reason }}
+  </div>
+
+</div>
+</div>
+{% endblock %}

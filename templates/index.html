@@ -1,0 +1,383 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NutriSense | Nutrition Risk Prediction</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+        }
+        .section {
+            margin-top: 25px;
+        }
+        .food-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        select, input {
+            padding: 8px;
+            width: 100%;
+        }
+        button {
+            padding: 10px 15px;
+            background: #2ecc71;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #27ae60;
+        }
+        .add-btn {
+            background: #3498db;
+        }
+        .add-btn:hover {
+            background: #2980b9;
+        }
+        label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>NutriSense – Nutrition Risk Prediction</h1>
+
+<div class="container">
+
+    <p>
+        Select your food intake using real-world units (bowl, cup, piece, glass).
+        You can add multiple food items.
+    </p>
+
+    <form method="POST" action="/predict">
+
+        <!-- FOOD SECTION -->
+        <div class="section">
+            <h3>Food Intake</h3>
+            <div class="food-row">
+
+  <!-- Dropdown -->
+  <select name="food[]" class="food-select">
+      <option value="">Select Food</option>
+      {% for food in foods %}
+          <option value="{{ food }}">{{ food }}</option>
+      {% endfor %}
+  </select>
+
+  <span style="margin:0 10px;">OR</span>
+
+  <!-- Manual Input -->
+  <input type="text"
+         name="food_custom[]"
+         placeholder="Type food name"
+         class="food-input">
+
+  <select name="unit[]" required>
+      <option value="">Unit</option>
+      <option value="grams">grams</option>
+      <option value="piece">piece</option>
+      <option value="bowl">bowl</option>
+      <option value="cup">cup</option>
+  </select>
+
+  <input type="number" name="count[]" placeholder="Qty" required>
+
+</div>
+
+            <!-- ADD FOOD BUTTON -->
+            <button type="button" class="add-btn" onclick="addFood()">+ Add Food</button>
+        </div>
+        <div class="camera-btn-wrapper">
+  <a href="/camera" class="camera-btn">
+    📷 Use Camera
+  </a>
+</div>
+<p class="info">
+  📷 Food detected via camera (nutrients estimated)
+</p>
+
+
+
+        <!-- WATER INTAKE -->
+        <div class="section">
+            <label>Water Intake (glasses)</label>
+            <input type="number" name="water_intake" min="0" placeholder="e.g. 5">
+        </div>
+
+        <!-- DISEASE -->
+        <div class="section">
+            <label>Disease (Optional)</label>
+            <select name="disease">
+                <option value="None">None</option>
+                <option value="Diabetes">Diabetes</option>
+                <option value="Heart">Heart Disease</option>
+                <option value="Anemia">Anemia</option>
+                <option value="Hypertension">Hypertension</option>
+            </select>
+        </div>
+
+        <!-- HEIGHT & WEIGHT -->
+        <div class="section">
+            <label>Height & Weight (Optional)</label>
+            <div class="food-row">
+                <input type="number" name="height" placeholder="Height (cm)">
+                <input type="number" name="weight" placeholder="Weight (kg)">
+            </div>
+        </div>
+
+        <!-- MEAL TYPE -->
+        <div class="section">
+            <label>Meal Type (Optional)</label>
+            <select name="meal_type">
+                <option value="">Select</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                <option value="Snacks">Snacks</option>
+            </select>
+        </div>
+
+        <!-- SUBMIT -->
+        <div class="section">
+            <button type="submit">Predict Nutrition Risk</button>
+        </div>
+
+    </form>
+
+</div>
+
+<!-- ================= JAVASCRIPT ================= -->
+<script>
+    /* SAFE JSON LOADING */
+    const portionMap = JSON.parse('{{ (portion_map or {}) | tojson | safe }}');
+    const categoryUnitMap = JSON.parse('{{ (category_unit_map or {}) | tojson | safe }}');
+
+    function loadUnits(foodSelect) {
+        const unitSelect = foodSelect.nextElementSibling;
+        unitSelect.innerHTML = "<option value=''>Select Unit</option>";
+
+        const food = foodSelect.value;
+        if (!food) return;
+
+        /* 1️⃣ FOOD-SPECIFIC UNITS */
+        if (portionMap[food]) {
+            Object.keys(portionMap[food]).forEach(u => {
+                let opt = document.createElement("option");
+                opt.value = u;
+                opt.text = u.replace("_", " ");
+                unitSelect.appendChild(opt);
+            });
+            return;
+        }
+
+        /* 2️⃣ CATEGORY-BASED UNITS */
+       
+    }
+</script>
+<script>
+function addFood() {
+
+    const container = document.querySelector(".section");
+
+    const newRow = document.createElement("div");
+    newRow.classList.add("food-row");
+
+    newRow.innerHTML = `
+        <select name="food[]" class="food-select">
+            <option value="">Select Food</option>
+            {% for food in foods %}
+                <option value="{{ food }}">{{ food }}</option>
+            {% endfor %}
+        </select>
+
+        <span style="margin:0 10px;">OR</span>
+
+        <input type="text"
+               name="food_custom[]"
+               placeholder="Type food name"
+               class="food-input">
+
+        <select name="unit[]" required>
+            <option value="">Unit</option>
+            <option value="grams">grams</option>
+            <option value="piece">piece</option>
+            <option value="bowl">bowl</option>
+            <option value="cup">cup</option>
+        </select>
+
+        <input type="number" name="count[]" placeholder="Qty" required>
+    `;
+
+    container.insertBefore(newRow, document.querySelector(".add-btn"));
+}
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const raw = sessionStorage.getItem("camera_food");
+    if (!raw) return;
+
+    const cameraFoods = JSON.parse(raw);
+
+    cameraFoods.forEach((item, index) => {
+
+        // ✅ ADD NEW ROW IF NEEDED
+        if (index > 0) {
+            addFood();
+        }
+
+        const foodSelect = document.querySelectorAll("select[name='food[]']")[index];
+        const unitSelect = document.querySelectorAll("select[name='unit[]']")[index];
+        const countInput = document.querySelectorAll("input[name='count[]']")[index];
+
+        if (!foodSelect || !unitSelect || !countInput) return;
+
+        const foodName = item.name;
+        const grams = item.weight_grams || 0;
+
+        // ===============================
+        // 1️⃣ SET FOOD NAME
+        // ===============================
+        let found = false;
+        for (let opt of foodSelect.options) {
+            if (opt.value.toLowerCase() === foodName.toLowerCase()) {
+                foodSelect.value = opt.value;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            const opt = document.createElement("option");
+            opt.value = foodName;
+            opt.textContent = foodName + " (Camera)";
+            opt.selected = true;
+            foodSelect.appendChild(opt);
+            foodSelect.value = foodName;
+        }
+
+        // 🔥 MUST LOAD UNITS FIRST
+        loadUnits(foodSelect);
+
+        // ===============================
+        // 2️⃣ CONVERT GRAMS → UNIT + COUNT
+        // ===============================
+        let unit = "grams";
+        let unitGrams = 100;
+
+        if (portionMap[foodName]) {
+            const entry = Object.entries(portionMap[foodName])[0];
+            unit = entry[0];
+            unitGrams = entry[1];
+        }
+
+        // Add unit option if missing
+        if (![...unitSelect.options].some(o => o.value === unit)) {
+            const opt = document.createElement("option");
+            opt.value = unit;
+            opt.textContent = unit.replace("_", " ");
+            unitSelect.appendChild(opt);
+        }
+
+        unitSelect.value = unit;
+        countInput.value = Math.max(1, Math.round(grams / unitGrams));
+    });
+
+    // ✅ CLEAN STORAGE
+    sessionStorage.removeItem("camera_food");
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const raw = sessionStorage.getItem("camera_food");
+    if (!raw) return;
+
+    const cameraFoods = JSON.parse(raw);
+
+    cameraFoods.forEach((item, index) => {
+
+        // 1️⃣ Add new row if needed
+        if (index > 0) {
+            addFood();
+        }
+
+        const foodSelect = document.querySelectorAll("select[name='food[]']")[index];
+        const unitSelect = document.querySelectorAll("select[name='unit[]']")[index];
+        const countInput = document.querySelectorAll("input[name='count[]']")[index];
+
+        if (!foodSelect || !unitSelect || !countInput) return;
+
+        const foodName = item.name;
+        const grams = item.weight_grams;
+
+        // 2️⃣ SET FOOD NAME (even if not in dataset)
+        let matched = false;
+
+        for (let opt of foodSelect.options) {
+            if (opt.value.toLowerCase() === foodName.toLowerCase()) {
+                foodSelect.value = opt.value;
+                matched = true;
+                break;
+            }
+        }
+
+        if (!matched) {
+            const opt = document.createElement("option");
+            opt.value = foodName;
+            opt.textContent = foodName + " (Camera)";
+            opt.selected = true;
+            foodSelect.appendChild(opt);
+            foodSelect.value = foodName;
+        }
+
+        // 3️⃣ LOAD UNITS BASED ON FOOD
+        loadUnits(foodSelect);
+
+        // 4️⃣ FORCE GRAMS UNIT
+        let gramsOption = [...unitSelect.options].find(o => o.value === "grams");
+
+        if (!gramsOption) {
+            gramsOption = document.createElement("option");
+            gramsOption.value = "grams";
+            gramsOption.textContent = "grams";
+            unitSelect.appendChild(gramsOption);
+        }
+
+        unitSelect.value = "grams";
+
+        // 5️⃣ SET QUANTITY DIRECTLY FROM CAMERA
+        countInput.value = Math.round(grams);
+
+    });
+
+    // 6️⃣ CLEAN STORAGE
+    sessionStorage.removeItem("camera_food");
+
+});
+</script>
+
+
+
+
+
+</body>
+</html>

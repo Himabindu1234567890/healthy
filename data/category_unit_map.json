@@ -1,0 +1,14 @@
+{
+  "Fruit": ["piece"],
+  "Vegetable": ["bowl", "grams"],
+  "Grain": ["bowl", "cup", "grams"],
+  "Rice": ["bowl", "cup", "grams"],
+  "Pulse": ["bowl", "grams"],
+  "Dairy": ["bowl", "cup", "glass"],
+  "Oil": ["tsp", "tbsp"],
+  "Spice": ["tsp", "tbsp"],
+  "Condiment": ["tsp", "tbsp"],
+  "Snack": ["piece"],
+  "Beverage": ["glass"],
+  "Default": ["grams"]
+}
