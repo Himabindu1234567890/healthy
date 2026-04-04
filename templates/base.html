@@ -12,14 +12,14 @@
 <div class="navbar">
     <h2 class="logo">NutriSense</h2>
     <div class="nav-links">
-        <a href="/home">Home</a>
-        <a href="/">Nutrition Risk</a>
-        <a href="/diet-plan">Diet Plan</a>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/about">About</a>
-        <a href="/profile">Profile</a>
-        <a href="/auth" class="login-btn">Login / Sign Up</a>
-    </div>
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('prediction') }}">Nutrition Risk</a>
+    <a href="{{ url_for('diet_plan_page') }}">Diet Plan</a>
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('about') }}">About</a>
+    <a href="{{ url_for('profile') }}">Profile</a>
+    <a href="{{ url_for('auth') }}" class="login-btn">Login / Sign Up</a>
+</div>
 </div>
 
 <!-- PAGE CONTENT -->

@@ -76,10 +76,17 @@ def hybrid_risk_prediction(ml_risk, features):
     return ml_risk
 
 # ======================================================
-# HOME / NUTRITION INPUT PAGE (OLD MAIN PAGE)
+# HOME Page
 # ======================================================
 @app.route("/")
-def nutrition_risk_page():
+def home():
+    return render_template("home.html")
+
+# ======================================================
+# PREDICTION PAGE
+# ======================================================
+@app.route("/prediction")
+def prediction():
     foods = get_food_list()
     food_category_map = {f: get_food_category(f) for f in foods}
 
@@ -90,7 +97,6 @@ def nutrition_risk_page():
         category_unit_map=CATEGORY_UNIT_MAP,
         food_category_map=food_category_map
     )
-
 # ======================================================
 # PREDICT ROUTE
 # ======================================================
@@ -551,7 +557,7 @@ def about():
     return render_template("about.html")
 
 @app.route("/home")
-def home():
+def home_page():
     return render_template("home.html")
 from flask import request, jsonify
 
